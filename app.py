@@ -220,6 +220,15 @@ section[data-testid="stSidebar"] > div{
     font-size:70px;
 }
 
+/* Header Streamlit */
+header[data-testid="stHeader"]{
+    background: radial-gradient(
+        circle at top left,
+        #172554 0%,
+        #09122b 45%,
+        #030712 100%
+    ) !important;
+
 </style>
 """,unsafe_allow_html=True)
 

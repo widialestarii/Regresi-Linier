@@ -5,74 +5,231 @@ import pandas as pd
 
 # ---------- Konfigurasi Halaman ----------
 st.set_page_config(
-    page_title='Prediksi Harga Mobil',
-    page_icon='🚗',
-    layout='centered',
-    initial_sidebar_state='expanded'
+    page_title="Smart Car Pricer",
+    page_icon="🚗",
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
 # ---------- Custom CSS (Modern UI) ----------
 st.markdown("""
-    <style>
-    html, body, [class*="css"]  {
-        font-family: 'Inter', sans-serif;
-    }
-    
-    /* Card Hasil Prediksi Modern */
-    .result-card {
-        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-        padding: 35px;
-        border-radius: 20px;
-        box-shadow: 0 10px 25px rgba(30, 60, 114, 0.3);
-        text-align: center;
-        color: white;
-        animation: slideUp 0.6s ease-in-out;
-        margin: 20px 0;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .result-card h3 {
-        margin: 0;
-        font-size: 1.1rem;
-        font-weight: 400;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        opacity: 0.85;
-        color: #e0e0e0 !important;
-    }
-    .result-card h1 {
-        margin: 15px 0 0 0;
-        font-size: 3.8rem;
-        font-weight: 800;
-        color: #00f2fe !important;
-        text-shadow: 0 2px 10px rgba(0,242,254,0.3);
-    }
-    
-    @keyframes slideUp {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .stButton>button {
-        background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%) !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 12px !important;
-        padding: 12px 24px !important;
-        font-weight: 700 !important;
-        font-size: 1rem !important;
-        box-shadow: 0 5px 15px rgba(56, 239, 125, 0.3);
-        transition: all 0.3s ease;
-    }
-    .stButton>button:hover {
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 8px 20px rgba(56, 239, 125, 0.4);
-    }
-    
-    .stAlert {
-        border-radius: 12px !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+html,body,[class*="css"]{
+    font-family:'Inter',sans-serif;
+}
+
+.stApp{
+    background:
+    radial-gradient(circle at top left,#172554 0%,#09122b 45%,#030712 100%);
+}
+
+/* SIDEBAR */
+
+section[data-testid="stSidebar"]{
+    background:linear-gradient(180deg,#2B2961,#1B1E46) !important;
+    border-right:1px solid rgba(255,255,255,.08);
+}
+
+section[data-testid="stSidebar"] > div{
+    padding-top:20px;
+}
+
+.stSidebar label,
+.stSidebar p,
+.stSidebar span{
+    color:white !important;
+}
+
+/* TITLE */
+
+.main-title{
+    text-align:center;
+    font-size:68px;
+    font-weight:800;
+
+    background:linear-gradient(
+    90deg,
+    #3B82F6,
+    #6366F1,
+    #A855F7);
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    margin-bottom:5px;
+}
+
+.sub-title{
+    text-align:center;
+    color:#d1d5db !important;
+    font-size:24px;
+}
+
+/* CARD INFO */
+
+.info-card{
+    background:linear-gradient(90deg,#2b3dff,#0077b6);
+
+    padding:30px;
+
+    border-radius:20px;
+
+    display:flex;
+
+    align-items:center;
+
+    margin-top:25px;
+
+    margin-bottom:30px;
+}
+
+.info-icon{
+    width:65px;
+    height:65px;
+
+    background:#3B82F6;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:35px;
+
+    color:white;
+
+    margin-right:25px;
+}
+
+.info-text{
+    color:white;
+    font-size:28px;
+}
+
+/* GUIDE */
+
+.guide-box{
+
+    background:#f8fafc;
+
+    border-radius:22px;
+
+    padding:35px;
+
+    box-shadow:0 20px 45px rgba(0,0,0,.2);
+
+    border-left:6px solid #3B82F6;
+}
+
+.guide-title{
+    font-size:38px;
+    font-weight:700;
+    color:#1e3a8a;
+    margin-bottom:25px;
+}
+
+.guide-row{
+    display:flex;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.guide-number{
+
+    width:35px;
+    height:35px;
+
+    background:#3B82F6;
+
+    border-radius:50%;
+
+    color:white;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-weight:700;
+
+    margin-right:18px;
+}
+
+.guide-text{
+    color:#374151;
+    font-size:22px;
+}
+
+/* BUTTON */
+
+.stButton > button{
+
+    background:linear-gradient(90deg,#3B82F6,#A855F7)!important;
+
+    color:white!important;
+
+    border:none!important;
+
+    border-radius:15px!important;
+
+    height:58px;
+
+    font-size:20px!important;
+
+    font-weight:700!important;
+
+    box-shadow:0 10px 25px rgba(168,85,247,.35);
+}
+
+.stButton > button:hover{
+
+    transform:translateY(-2px);
+
+}
+
+/* INPUT */
+
+.stNumberInput input{
+    background:#151B3D !important;
+    color:white !important;
+}
+
+.result-card{
+    background:linear-gradient(135deg,#172554,#0f172a);
+    border-radius:22px;
+    padding:40px;
+    text-align:center;
+    margin-top:20px;
+}
+
+.result-card h3{
+    color:#A855F7!important;
+}
+
+.result-card h1{
+    color:#38BDF8!important;
+    font-size:70px;
+}
+
+footer{
+visibility:hidden;
+}
+
+#MainMenu{
+visibility:hidden;
+}
+
+header{
+visibility:hidden;
+}
+
+</style>
+""",unsafe_allow_html=True)
 
 # ---------- Muat Model & Scaler (cached) ----------
 @st.cache_resource
@@ -91,8 +248,19 @@ def load_artefak():
 model, scaler, FITUR = load_artefak()
 
 # ---------- Header Utama ----------
-st.markdown("<h1 style='text-align: center; color: #1e3c72; margin-bottom: 0;'>🚗 Smart Car Pricer</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; font-size: 1.1rem; color: #555; margin-top: 5px;'>Estimasi harga jual mobil bekas Anda secara instan berbasis <i>Machine Learning</i></p>", unsafe_allow_html=True)
+st.markdown(
+"""
+<div class="main-title">
+🚗 Smart Car Pricer
+</div>
+
+<div class="sub-title">
+Estimasi harga jual mobil bekas Anda secara instan berbasis <i>Machine Learning</i>
+</div>
+
+""",
+unsafe_allow_html=True
+)
 st.write("") 
 
 # ---------- Sidebar Input ----------
@@ -177,19 +345,60 @@ if btn_prediksi:
     except Exception as e:
         st.error(f'Terjadi kendala saat melakukan kalkulasi: {e}')
 else:
-    st.info('👈 Silakan tentukan spesifikasi mobil pada menu **Sidebar di sebelah kiri**, lalu tekan tombol **Hitung Estimasi Harga**.')
-    
     st.markdown("""
-        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 12px; border-left: 5px solid #1e3c72; margin-top: 20px;">
-            <h4 style="margin-top:0; color: #1e3c72;">💡 Cara Menggunakan Aplikasi:</h4>
-            <ol style="margin-bottom:0; padding-left:20px; color:#555;">
-                <li>Geser slider atau masukkan angka sesuai kondisi mobil pada panel kiri.</li>
-                <li>Pastikan satuan data yang Anda masukkan sudah tepat (Tahun, Mileage/KM, cc).</li>
-                <li>Klik tombol hijau <b>"Hitung Estimasi Harga"</b>.</li>
-                <li>Sistem akan menghitung harga paling rasional berdasarkan performa histori data pembelajaran.</li>
-            </ol>
-        </div>
-    """, unsafe_allow_html=True)
+<div class="info-card">
+
+<div class="info-icon">
+ℹ
+</div>
+
+<div class="info-text">
+Silakan tentukan spesifikasi mobil pada menu Sidebar di sebelah kiri,<br>
+lalu tekan tombol <b>Hitung Estimasi Harga</b>.
+</div>
+
+</div>
+""",unsafe_allow_html=True)
+
+st.markdown("""
+
+<div class="guide-box">
+
+<div class="guide-title">
+💡 Cara Menggunakan Aplikasi:
+</div>
+
+<div class="guide-row">
+<div class="guide-number">1</div>
+<div class="guide-text">
+Geser slider atau masukkan angka sesuai kondisi mobil pada panel kiri.
+</div>
+</div>
+
+<div class="guide-row">
+<div class="guide-number">2</div>
+<div class="guide-text">
+Pastikan satuan data yang Anda masukkan sudah tepat (Tahun, Mileage/KM, cc).
+</div>
+</div>
+
+<div class="guide-row">
+<div class="guide-number">3</div>
+<div class="guide-text">
+Klik tombol <b>"Hitung Estimasi Harga"</b>.
+</div>
+</div>
+
+<div class="guide-row">
+<div class="guide-number">4</div>
+<div class="guide-text">
+Sistem akan menghitung harga paling rasional berdasarkan histori data pembelajaran.
+</div>
+</div>
+
+</div>
+
+""",unsafe_allow_html=True)
 
 # ---------- Footer ----------
 st.markdown("<br><hr>", unsafe_allow_html=True)

@@ -14,7 +14,6 @@ st.set_page_config(
 # ---------- Custom CSS (Modern UI) ----------
 st.markdown("""
     <style>
-    /* Mengubah font global ke Inter/Sans-serif */
     html, body, [class*="css"]  {
         font-family: 'Inter', sans-serif;
     }
@@ -48,13 +47,11 @@ st.markdown("""
         text-shadow: 0 2px 10px rgba(0,242,254,0.3);
     }
     
-    /* Efek Animasi */
     @keyframes slideUp {
         from { opacity: 0; transform: translateY(30px); }
         to { opacity: 1; transform: translateY(0); }
     }
     
-    /* Styling tombol utama */
     .stButton>button {
         background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%) !important;
         color: white !important;
@@ -71,7 +68,6 @@ st.markdown("""
         box-shadow: 0 8px 20px rgba(56, 239, 125, 0.4);
     }
     
-    /* Info Box Styling */
     .stAlert {
         border-radius: 12px !important;
     }
@@ -81,16 +77,15 @@ st.markdown("""
 # ---------- Muat Model & Scaler (cached) ----------
 @st.cache_resource
 def load_artefak():
-    # Menggunakan try-except sebagai fallback jika file belum ada saat testing awal
     try:
         model  = joblib.load('regresi_berganda.pkl')
         scaler = joblib.load('scaler.pkl')
         fitur  = joblib.load('fitur.pkl')
     except:
-        # Dummy data untuk testing UI jika file pkl belum siap
-        model = type('Mock', (object,), {'predict': lambda self, x: np.array([450000000]), 'coef_': np.array([0.45, -0.2, 0.1]), 'intercept_': 15000000})()
+        # Dummy data untuk fallback testing UI
+        model = type('Mock', (object,), {'predict': lambda self, x: np.array([24550.50]), 'coef_': np.array([1200, -0.05, 1.5]), 'intercept_': 5000})()
         scaler = type('Mock', (object,), {'transform': lambda self, x: x})()
-        fitur = ['Tahun Mobil', 'Kilometer', 'Kapasitas Mesin (cc)']
+        fitur = ['Tahun Mobil', 'Mileage', 'Kapasitas Mesin (cc)']
     return model, scaler, fitur
 
 model, scaler, FITUR = load_artefak()
@@ -108,17 +103,21 @@ with st.sidebar:
     
     input_user = {}
     
-    # Memisahkan input berdasarkan tipe data agar UI lebih intuitif
     for f in FITUR:
-        # Contoh interaktivitas dinamis berdasarkan nama fitur
-        if 'tahun' in f.lower():
+        # Pengecekan kondisi fitur Tahun (Integer)
+        if 'tahun' in f.lower() or 'year' in f.lower():
             input_user[f] = st.slider(f"📅 {f}", min_value=2000, max_value=2026, value=2018, step=1)
-        elif 'kilometer' in f.lower() or 'km' in f.lower():
-            input_user[f] = st.number_input(f"🛣️ {f}", min_value=0, value=50000, step=5000)
+            
+        # Pengecekan kondisi fitur Mileage / Kilometer (Integer)
+        elif 'mileage' in f.lower() or 'kilometer' in f.lower() or 'km' in f.lower():
+            input_user[f] = st.number_input(f"🛣️ {f}", min_value=0, value=50000, step=1000, format="%d")
+            
+        # Pengecekan kondisi fitur Kapasitas Mesin
         elif 'mesin' in f.lower() or 'cc' in f.lower():
             input_user[f] = st.selectbox(f"🔌 {f}", options=[1000, 1200, 1500, 2000, 2500, 3000], index=2)
+            
+        # Fallback fitur lainnya
         else:
-            # Fallback jika nama fitur di luar prediksi di atas
             input_user[f] = st.number_input(f"📊 {f}", value=0.0, step=0.1, format='%.2f')
             
     st.markdown("<br>", unsafe_allow_html=True)
@@ -133,15 +132,21 @@ if btn_prediksi:
             nilai_sc = scaler.transform(nilai)
             pred = model.predict(nilai_sc)[0]
             
-            # Jika hasil prediksi tidak realistis (negatif) akibat model linear
             if pred < 0:
-                pred = 0
+                pred = 0.0
+
+            # Kustomisasi format mata uang USD: Ribuan menggunakan (.) dan Desimal menggunakan (,)
+            # Contoh hasil: $ 24.550,50 atau $ 15.000
+            harga_terformat = f"$ {pred:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+            # Jika ingin menghilangkan ,00 di belakang jika hasilnya bulat sempurna, gunakan baris ini:
+            if harga_terformat.endswith(',00'):
+                harga_terformat = harga_terformat[:-3]
 
             # Tampilkan hasil dalam bentuk card modern
             st.markdown(f"""
                 <div class="result-card">
                     <h3>Estimasi Harga Pasar</h3>
-                    <h1>Rp {pred:,.0f}</h1>
+                    <h1>{harga_terformat}</h1>
                 </div>
             """, unsafe_allow_html=True)
 
@@ -152,7 +157,7 @@ if btn_prediksi:
             with col2:
                 st.metric(label="Jumlah Fitur Dianalisis", value=f"{len(FITUR)} Fitur")
 
-            # Detail tambahan disembunyikan dalam expander agar UI tetap rapi
+            # Detail tambahan disembunyikan dalam expander
             st.write("")
             with st.expander("📊 Analisis & Detail Teknis Model", expanded=False):
                 st.markdown("#### Ringkasan Input Pengguna")
@@ -164,7 +169,6 @@ if btn_prediksi:
                     'Bobot Pengaruh': model.coef_.round(4),
                 }).sort_values(by='Bobot Pengaruh', ascending=False)
                 
-                # Menampilkan chart visual sederhana untuk bobot fitur
                 st.bar_chart(df_koef, x='Nama Fitur', y='Bobot Pengaruh', color='#2a5298')
                 
                 st.caption("Nilai positif berarti meningkatkan harga, nilai negatif berarti menurunkan harga.")
@@ -173,16 +177,14 @@ if btn_prediksi:
     except Exception as e:
         st.error(f'Terjadi kendala saat melakukan kalkulasi: {e}')
 else:
-    # Tampilan awal saat aplikasi dibuka (Placeholder menarik)
     st.info('👈 Silakan tentukan spesifikasi mobil pada menu **Sidebar di sebelah kiri**, lalu tekan tombol **Hitung Estimasi Harga**.')
     
-    # Menambahkan ilustrasi langkah penggunaan
     st.markdown("""
         <div style="background-color: #f8f9fa; padding: 20px; border-radius: 12px; border-left: 5px solid #1e3c72; margin-top: 20px;">
             <h4 style="margin-top:0; color: #1e3c72;">💡 Cara Menggunakan Aplikasi:</h4>
             <ol style="margin-bottom:0; padding-left:20px; color:#555;">
                 <li>Geser slider atau masukkan angka sesuai kondisi mobil pada panel kiri.</li>
-                <li>Pastikan satuan data yang Anda masukkan sudah tepat (Tahun, KM, cc).</li>
+                <li>Pastikan satuan data yang Anda masukkan sudah tepat (Tahun, Mileage/KM, cc).</li>
                 <li>Klik tombol hijau <b>"Hitung Estimasi Harga"</b>.</li>
                 <li>Sistem akan menghitung harga paling rasional berdasarkan performa histori data pembelajaran.</li>
             </ol>

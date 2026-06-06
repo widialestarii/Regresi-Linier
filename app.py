@@ -46,17 +46,24 @@ section[data-testid="stSidebar"] > div{
     text-align:center;
     font-size:68px;
     font-weight:800;
+    margin-bottom:5px;
+}
 
+.main-title .car-icon{
+    color:#3B82F6;
+    -webkit-text-fill-color:#3B82F6;
+}
+
+.main-title .title-text{
     background:linear-gradient(
-    90deg,
-    #3B82F6,
-    #6366F1,
-    #A855F7);
+        90deg,
+        #3B82F6,
+        #6366F1,
+        #A855F7
+    );
 
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
-
-    margin-bottom:5px;
 }
 
 .sub-title{
@@ -233,15 +240,13 @@ def load_artefak():
 model, scaler, FITUR = load_artefak()
 
 # ---------- Header Utama ----------
-st.markdown(
-"""
+st.markdown("""
 <div class="main-title">
-🚗 Smart Car Pricer
+    <span class="car-icon">🚗</span>
+    <span class="title-text">Smart Car Pricer</span>
 </div>
-""",
-unsafe_allow_html=True
-)
-st.markdown("<p style='text-align: center; font-size: 1.1rem; color: #555; margin-top: 5px;'>Estimasi harga jual mobil bekas Anda secara instan berbasis <i>Machine Learning</i></p>", unsafe_allow_html=True)
+""", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: 1.1rem; color: white; margin-top: 5px;'>Estimasi harga jual mobil bekas Anda secara instan berbasis <i>Machine Learning</i></p>", unsafe_allow_html=True)
 st.write("")
 
 # ---------- Sidebar Input ----------

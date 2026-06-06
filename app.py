@@ -11,33 +11,34 @@ st.set_page_config(
     initial_sidebar_state='expanded'
 )
 
-# ---------- Custom CSS (Premium UI / Luxury Color Palette) ----------
+# ---------- Custom CSS (White Clean Background UI) ----------
 st.markdown("""
     <style>
-    /* Mengimpor font Inter dari Google Fonts */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+    
+    /* Mengubah background area utama menjadi PUTIH */
+    .stApp {
+        background-color: #ffffff !important;
+    }
     
     html, body, [class*="css"]  {
         font-family: 'Inter', sans-serif;
-        background-color: #f8fafc;
     }
     
-    /* Judul Utama */
+    /* Judul Utama dengan warna gelap solid agar kontras di bg putih */
     .main-title {
         text-align: center; 
-        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        color: #0f172a;
         font-weight: 800;
         margin-bottom: 0px;
     }
     
-    /* Card Hasil Prediksi - Midnight Luxury Theme */
+    /* Card Hasil Prediksi - Tetap Premium Dark agar Sangat Kontras */
     .result-card {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
         padding: 40px;
         border-radius: 24px;
-        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15);
+        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
         text-align: center;
         color: white;
         animation: slideUp 0.5s cubic-bezier(0.1, 0.8, 0.3, 1);
@@ -50,13 +51,13 @@ st.markdown("""
         font-weight: 600;
         letter-spacing: 2px;
         text-transform: uppercase;
-        color: #f59e0b !important; /* Aksen Emas Muted */
+        color: #f59e0b !important;
     }
     .result-card h1 {
         margin: 15px 0 0 0;
         font-size: 4rem;
         font-weight: 800;
-        color: #22d3ee !important; /* Cyan Elektrik */
+        color: #22d3ee !important;
         text-shadow: 0 4px 20px rgba(34, 211, 238, 0.3);
     }
     
@@ -84,19 +85,17 @@ st.markdown("""
         background: linear-gradient(135deg, #0891b2 0%, #2563eb 100%) !important;
     }
     
-    /* Merapikan tampilan sidebar */
-    .css-163ttbj, .stSidebar {
-        background-color: #0f172a !important;
-    }
-    
-    /* Box Panduan */
+    /* Box Panduan - Disesuaikan agar serasi dengan BG Putih */
     .guide-box {
-        background-color: #ffffff; 
+        background-color: #f8fafc; 
         padding: 24px; 
         border-radius: 16px; 
         border-left: 6px solid #3b82f6; 
         margin-top: 25px;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        border-top: 1px solid #e2e8f0;
+        border-right: 1px solid #e2e8f0;
+        border-bottom: 1px solid #e2e8f0;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -119,10 +118,10 @@ model, scaler, FITUR = load_artefak()
 
 # ---------- Header Utama ----------
 st.markdown("<h1 class='main-title'>🚗 Smart Car Pricer</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; font-size: 1.1rem; color: #64748b; margin-top: 5px;'>Estimasi harga jual mobil bekas Anda secara instan berbasis <i>Machine Learning</i></p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: 1.1rem; color: #475569; margin-top: 5px;'>Estimasi harga jual mobil bekas Anda secara instan berbasis <i>Machine Learning</i></p>", unsafe_allow_html=True)
 st.write("") 
 
-# ---------- Sidebar Input ----------
+# ---------- Sidebar Input (Latar belakang bawaan asli tidak disentuh) ----------
 with st.sidebar:
     st.markdown("### ⚙️ Spesifikasi Mobil")
     st.caption("Sesuaikan detail kondisi kendaraan di bawah ini:")
@@ -162,7 +161,6 @@ if btn_prediksi:
             if harga_terformat.endswith(',00'):
                 harga_terformat = harga_terformat[:-3]
 
-            # Tampilkan hasil dalam bentuk card modern dengan warna baru
             st.markdown(f"""
                 <div class="result-card">
                     <h3>Estimasi Harga Pasar</h3>
@@ -188,7 +186,6 @@ if btn_prediksi:
                     'Bobot Pengaruh': model.coef_.round(4),
                 }).sort_values(by='Bobot Pengaruh', ascending=False)
                 
-                # Menggunakan warna biru gelap (#0f172a) untuk menyelaraskan dengan tema visual baru
                 st.bar_chart(df_koef, x='Nama Fitur', y='Bobot Pengaruh', color='#0f172a')
                 
                 st.caption("Nilai positif berarti meningkatkan harga, nilai negatif berarti menurunkan harga.")

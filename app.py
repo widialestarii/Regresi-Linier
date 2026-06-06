@@ -7,7 +7,7 @@ import pandas as pd
 st.set_page_config(
     page_title='Prediksi Harga Mobil',
     page_icon='🚗',
-    layout='centered', # Dikembalikan ke 'centered' agar box panduan tampak pas di tengah
+    layout='wide', # Diubah ke 'wide' agar muat 3 kolom menyamping seperti di gambar
     initial_sidebar_state='expanded'
 )
 
@@ -94,40 +94,83 @@ st.markdown("""
     /* Box Panduan Putih Bersih */
     .guide-box {
         background-color: #ffffff !important; 
-        padding: 30px; 
+        padding: 25px; 
         border-radius: 16px; 
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        height: 100%;
     }
     .guide-box h4 {
-        margin: 0 0 25px 0; 
+        margin: 0 0 20px 0; 
         color: #0f172a !important; 
         font-weight: 700;
-        font-size: 1.25rem;
+        font-size: 1.15rem;
     }
     .guide-item {
         display: flex;
         align-items: flex-start;
-        gap: 15px;
-        margin-bottom: 18px;
+        gap: 12px;
+        margin-bottom: 15px;
     }
     .guide-number {
         background-color: #3b82f6;
         color: white !important;
         border-radius: 50%;
-        width: 26px;
-        height: 26px;
+        width: 24px;
+        height: 24px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         font-weight: 600;
         flex-shrink: 0;
-        margin-top: 1px;
+        margin-top: 2px;
     }
     .guide-text {
         color: #475569 !important;
-        font-size: 0.95rem;
-        line-height: 1.5;
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+    
+    /* Card Hasil Prediksi Tengah (Gelap/Glowing Neon) */
+    .result-card {
+        background: linear-gradient(180deg, #111827 0%, #1f1635 100%);
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 0 25px rgba(34, 211, 238, 0.15);
+        text-align: center;
+        border: 1px solid rgba(139, 92, 246, 0.2);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .result-card h3 {
+        margin: 0;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        color: #3b82f6 !important;
+    }
+    .result-card h1 {
+        margin: 15px 0;
+        font-size: 3rem;
+        font-weight: 800;
+        color: #22d3ee !important;
+        text-shadow: 0 0 15px rgba(34, 211, 238, 0.4);
+    }
+    .result-card p {
+        margin: 0;
+        font-size: 0.8rem;
+        color: #94a3b8 !important;
+    }
+
+    /* Container Box untuk Chart agar Latar Belakangnya Putih Melengkung */
+    .chart-box {
+        background-color: #ffffff !important;
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        height: 100%;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -140,9 +183,9 @@ def load_artefak():
         scaler = joblib.load('scaler.pkl')
         fitur  = joblib.load('fitur.pkl')
     except:
-        # Fallback dummy data untuk keperluan pengujian UI
-        model = None
-        scaler = None
+        # Dummy data agar layout tetap bisa dirender untuk dicoba langsung
+        model = type('Mock', (object,), {'predict': lambda self, x: np.array([38450.00]), 'coef_': np.array([2500, -1200, 800]), 'intercept_': 5000})()
+        scaler = type('Mock', (object,), {'transform': lambda self, x: x})()
         fitur = ['Year', 'Mileage (KM)', 'Kapasitas Mesin (cc)']
     return model, scaler, fitur
 
@@ -174,7 +217,7 @@ with st.sidebar:
 
 # ---------- Area Utama Konten ----------
 
-# Box Info Biru (Sesuai Gambar)
+# Box Info Biru (Selalu Muncul di Atas Sesuai Gambar)
 st.markdown("""
     <div class="info-card-custom">
         <div class="info-icon-circle">i</div>
@@ -185,28 +228,87 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Box Panduan Cara Menggunakan (Tampil Tunggal Secara Centered)
-st.markdown("""
-    <div class="guide-box">
-        <h4>💡 Cara Menggunakan Aplikasi:</h4>
-        <div class="guide-item">
-            <div class="guide-number">1</div>
-            <div class="guide-text">Geser slider atau masukkan angka sesuai kondisi mobil pada panel kiri.</div>
+# Membuat 3 Kolom Secara Horizontal Sesuai Desain Gambar Anda
+col_panduan, col_hasil, col_grafik = st.columns([1.1, 1.0, 0.9])
+
+# --- KOLOM 1: Box Panduan Cara Menggunakan (Kiri) ---
+with col_panduan:
+    st.markdown("""
+        <div class="guide-box">
+            <h4>💡 Cara Menggunakan Aplikasi:</h4>
+            <div class="guide-item">
+                <div class="guide-number">1</div>
+                <div class="guide-text">Geser slider atau masukkan angka sesuai kondisi mobil pada panel kiri.</div>
+            </div>
+            <div class="guide-item">
+                <div class="guide-number">2</div>
+                <div class="guide-text">Pastikan satuan data yang Anda masukkan sudah tepat (Tahun, Mileage/KM, cc).</div>
+            </div>
+            <div class="guide-item">
+                <div class="guide-number">3</div>
+                <div class="guide-text">Klik tombol hijau "Hitung Estimasi Harga".</div>
+            </div>
+            <div class="guide-item">
+                <div class="guide-number">4</div>
+                <div class="guide-text">Sistem akan menghitung harga paling rasional berdasarkan performa histori data pembelajaran.</div>
+            </div>
         </div>
-        <div class="guide-item">
-            <div class="guide-number">2</div>
-            <div class="guide-text">Pastikan satuan data yang Anda masukkan sudah tepat (Tahun, Mileage/KM, cc).</div>
-        </div>
-        <div class="guide-item">
-            <div class="guide-number">3</div>
-            <div class="guide-text">Klik tombol hijau "Hitung Estimasi Harga".</div>
-        </div>
-        <div class="guide-item">
-            <div class="guide-number">4</div>
-            <div class="guide-text">Sistem akan menghitung harga paling rasional berdasarkan performa histori data pembelajaran.</div>
-        </div>
-    </div>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
+
+# --- KOLOM 2: Card Hasil Estimasi (Tengah) ---
+with col_hasil:
+    if btn_prediksi:
+        try:
+            nilai = pd.DataFrame([[input_user[f] for f in FITUR]], columns=FITUR)
+            nilai_sc = scaler.transform(nilai)
+            pred = model.predict(nilai_sc)[0]
+            if pred < 0: pred = 0.0
+
+            # Format USD ($) pemisah ribuan titik
+            harga_terformat = f"$ {pred:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+            if harga_terformat.endswith(',00'): 
+                harga_terformat = harga_terformat[:-3]
+            
+            st.markdown(f"""
+                <div class="result-card">
+                    <h3>ESTIMASI HARGA PASAR</h3>
+                    <h1>{harga_terformat}</h1>
+                    <p>berdasarkan performa histori data pembelajaran</p>
+                </div>
+            """, unsafe_allow_html=True)
+        except Exception as e:
+            st.error(f"Error: {e}")
+    else:
+        # Keadaan Standby Sebelum Klik Prediksi
+        st.markdown("""
+            <div class="result-card" style="opacity: 0.5;">
+                <h3>ESTIMASI HARGA PASAR</h3>
+                <h1>$ --.--</h1>
+                <p>Menunggu input data dari sidebar...</p>
+            </div>
+        """, unsafe_allow_html=True)
+
+# --- KOLOM 3: Grafik Koefisien Model Bawaan (Kanan) ---
+with col_grafik:
+    if btn_prediksi:
+        # Membuka container latar putih untuk chart
+        st.markdown('<div class="chart-box">', unsafe_allow_html=True)
+        
+        df_koef = pd.DataFrame({
+            'Fitur': FITUR,
+            'Bobot': model.coef_
+        })
+        # Menampilkan grafik batang vertikal berwarna gelap kontras di atas box putih
+        st.bar_chart(df_koef, x='Fitur', y='Bobot', color='#0f172a', use_container_width=True)
+        
+        st.markdown('</div>', unsafe_allow_html=True)
+    else:
+        # Keadaan Standby Sebelum Klik Prediksi
+        st.markdown("""
+            <div class="guide-box" style="display:flex; align-items:center; justify-content:center; opacity:0.5;">
+                <p style="color:#64748b !important; text-align:center;">Grafik analisis model akan muncul di sini setelah kalkulasi selesai.</p>
+            </div>
+        """, unsafe_allow_html=True)
 
 # ---------- Footer ----------
 st.markdown("<br><br><hr style='opacity: 0.05;'>", unsafe_allow_html=True)

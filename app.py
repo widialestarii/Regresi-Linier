@@ -213,18 +213,6 @@ section[data-testid="stSidebar"] > div{
     font-size:70px;
 }
 
-footer{
-visibility:hidden;
-}
-
-#MainMenu{
-visibility:hidden;
-}
-
-header{
-visibility:hidden;
-}
-
 </style>
 """,unsafe_allow_html=True)
 
@@ -245,9 +233,19 @@ def load_artefak():
 model, scaler, FITUR = load_artefak()
 
 # ---------- Header Utama ----------
-st.markdown("<h1 style='text-align: center; color: #1e3c72; margin-bottom: 0;'>🚗 Smart Car Pricer</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; font-size: 1.1rem; color: #555; margin-top: 5px;'>Estimasi harga jual mobil bekas Anda secara instan berbasis <i>Machine Learning</i></p>", unsafe_allow_html=True)
-st.write("") 
+st.markdown(
+"""
+<div class="main-title">
+🚗 Smart Car Pricer
+</div>
+
+<div class="sub-title">
+Estimasi harga jual mobil bekas Anda secara instan berbasis <i>Machine Learning</i>
+</div>
+
+""",
+unsafe_allow_html=True
+)
 
 # ---------- Sidebar Input ----------
 with st.sidebar:

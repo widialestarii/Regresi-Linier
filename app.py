@@ -5,22 +5,19 @@ import pandas as pd
 
 # ---------- Konfigurasi Halaman ----------
 st.set_page_config(
-    page_title="Smart Car Pricer",
-    page_icon="🚗",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    page_title='Prediksi Harga Mobil',
+    page_icon='🚗',
+    layout='centered',
+    initial_sidebar_state='expanded'
 )
 
 # ---------- Custom CSS (Modern UI) ----------
 st.markdown("""
-<style>
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-
-html,body,[class*="css"]{
-    font-family:'Inter',sans-serif;
-}
-
+    <style>
+    html, body, [class*="css"]  {
+        font-family: 'Inter', sans-serif;
+    }
+    
 .stApp{
     background:
     radial-gradient(circle at top left,#172554 0%,#09122b 45%,#030712 100%);
@@ -248,19 +245,8 @@ def load_artefak():
 model, scaler, FITUR = load_artefak()
 
 # ---------- Header Utama ----------
-st.markdown(
-"""
-<div class="main-title">
-🚗 Smart Car Pricer
-</div>
-
-<div class="sub-title">
-Estimasi harga jual mobil bekas Anda secara instan berbasis <i>Machine Learning</i>
-</div>
-
-""",
-unsafe_allow_html=True
-)
+st.markdown("<h1 style='text-align: center; color: #1e3c72; margin-bottom: 0;'>🚗 Smart Car Pricer</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: 1.1rem; color: #555; margin-top: 5px;'>Estimasi harga jual mobil bekas Anda secara instan berbasis <i>Machine Learning</i></p>", unsafe_allow_html=True)
 st.write("") 
 
 # ---------- Sidebar Input ----------
@@ -345,60 +331,19 @@ if btn_prediksi:
     except Exception as e:
         st.error(f'Terjadi kendala saat melakukan kalkulasi: {e}')
 else:
+    st.info('👈 Silakan tentukan spesifikasi mobil pada menu **Sidebar di sebelah kiri**, lalu tekan tombol **Hitung Estimasi Harga**.')
+    
     st.markdown("""
-<div class="info-card">
-
-<div class="info-icon">
-ℹ
-</div>
-
-<div class="info-text">
-Silakan tentukan spesifikasi mobil pada menu Sidebar di sebelah kiri,<br>
-lalu tekan tombol <b>Hitung Estimasi Harga</b>.
-</div>
-
-</div>
-""",unsafe_allow_html=True)
-
-st.markdown("""
-
-<div class="guide-box">
-
-<div class="guide-title">
-💡 Cara Menggunakan Aplikasi:
-</div>
-
-<div class="guide-row">
-<div class="guide-number">1</div>
-<div class="guide-text">
-Geser slider atau masukkan angka sesuai kondisi mobil pada panel kiri.
-</div>
-</div>
-
-<div class="guide-row">
-<div class="guide-number">2</div>
-<div class="guide-text">
-Pastikan satuan data yang Anda masukkan sudah tepat (Tahun, Mileage/KM, cc).
-</div>
-</div>
-
-<div class="guide-row">
-<div class="guide-number">3</div>
-<div class="guide-text">
-Klik tombol <b>"Hitung Estimasi Harga"</b>.
-</div>
-</div>
-
-<div class="guide-row">
-<div class="guide-number">4</div>
-<div class="guide-text">
-Sistem akan menghitung harga paling rasional berdasarkan histori data pembelajaran.
-</div>
-</div>
-
-</div>
-
-""",unsafe_allow_html=True)
+        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 12px; border-left: 5px solid #1e3c72; margin-top: 20px;">
+            <h4 style="margin-top:0; color: #1e3c72;">💡 Cara Menggunakan Aplikasi:</h4>
+            <ol style="margin-bottom:0; padding-left:20px; color:#555;">
+                <li>Geser slider atau masukkan angka sesuai kondisi mobil pada panel kiri.</li>
+                <li>Pastikan satuan data yang Anda masukkan sudah tepat (Tahun, Mileage/KM, cc).</li>
+                <li>Klik tombol hijau <b>"Hitung Estimasi Harga"</b>.</li>
+                <li>Sistem akan menghitung harga paling rasional berdasarkan performa histori data pembelajaran.</li>
+            </ol>
+        </div>
+    """, unsafe_allow_html=True)
 
 # ---------- Footer ----------
 st.markdown("<br><hr>", unsafe_allow_html=True)

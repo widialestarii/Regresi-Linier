@@ -238,14 +238,11 @@ st.markdown(
 <div class="main-title">
 🚗 Smart Car Pricer
 </div>
-
-<div class="sub-title">
-Estimasi harga jual mobil bekas Anda secara instan berbasis <i>Machine Learning</i>
-</div>
-
 """,
 unsafe_allow_html=True
 )
+st.markdown("<p style='text-align: center; font-size: 1.1rem; color: #555; margin-top: 5px;'>Estimasi harga jual mobil bekas Anda secara instan berbasis <i>Machine Learning</i></p>", unsafe_allow_html=True)
+st.write("")
 
 # ---------- Sidebar Input ----------
 with st.sidebar:
